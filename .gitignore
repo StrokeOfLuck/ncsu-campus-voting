@@ -1,0 +1,14 @@
+# Raw voter-level election files may contain personal information.
+data/raw/
+
+# Intermediate voter-level files
+data/intermediate/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS/editor
+.DS_Store
+.vscode/

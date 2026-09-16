@@ -1,55 +1,37 @@
-# Methodology notes
+# Methodology index
 
-## Baseline election
+This project keeps early voting and Election Day analysis separate because they use different data and different rules.
 
-Use the November 8, 2022 general election as the primary historical baseline for a 2026 midterm comparison.
+## Baseline
 
-Talley Student Union served as a Wake County one-stop early-voting site in 2022. Wake County reports 10,390 ballots cast at the NCSU Talley Student Union early-voting site in that election.
+Use the **November 8, 2022 general election** as the historical baseline for the **November 3, 2026 general election**.
 
-## Early-voting records
+The project intentionally skips 2024 for the main comparison so the reporting stays focused on two midterm general elections.
 
-Primary source: North Carolina State Board of Elections `Absentee by County` file for the November 8, 2022 election.
+## Early voting
 
-NCSBE's published instructions for early-voting lists are:
+See [`docs/early-voting-methodology.md`](docs/early-voting-methodology.md).
 
-1. Download the Absentee by County ZIP.
-2. Filter `abs_req_type` to `EARLY VOTING`.
-3. Filter `ballot_rtn_status` to `ACCEPTED`.
+Early voting is site-choice data: eligible voters may use any early-voting site in their county. The 2022 NC State baseline is Talley Student Union, where Wake County reports 10,390 ballots cast during early voting.
 
-For site-specific analysis, additionally filter `site_name` for the Talley/NC State early-voting location.
+Processed data live in:
 
-## Measures to build
-
-For Talley and Wake County overall:
-
-- total accepted early votes
-- daily ballots cast
-- age distribution
-- voter party registration
-- race
-- ethnicity
-- gender
-- precinct of registration
-- same-day registration count, when available
-
-For publication, use aggregate counts and percentages rather than publishing voter names, addresses, NCIDs or other voter-level identifiers.
-
-## 2026 comparison
-
-The primary comparison should be 2022 general election versus 2026 general election because both are non-presidential federal general elections. Any 2024 presidential-election comparison should be clearly labeled as contextual rather than treated as a like-for-like turnout comparison.
-
-Useful denominators include:
-
-- campus-site ballots
-- all Wake County early votes
-- campus-site share of Wake early voting
-- age-group share within each site
-- voting-method share when Election Day data are added
+`data/processed/early_voting/`
 
 ## Election Day
 
-Election Day voting is precinct-based rather than countywide site choice. Use NCSBE historical polling-place data and voter-history data to identify voting method and precinct-level participation. Do not assume all voters in an NC State-area precinct are students.
+See [`docs/election-day-methodology.md`](docs/election-day-methodology.md).
 
-## Reproducibility
+Election Day is precinct-assigned voting based on residential address. The analysis uses NCSBE historical voter-history statistics plus the official polling-place file.
 
-Keep official source URLs and scripts in Git. Do not commit raw voter-level files to this public repository. Save aggregate outputs sufficient to reproduce published charts and reported figures.
+Processed data live in:
+
+`data/processed/election_day/`
+
+## Story plan
+
+See [`docs/story-plan.md`](docs/story-plan.md) for the exact 2022-to-2026 comparison plan, November workflow and possible graphics.
+
+## Publication and privacy
+
+Keep official source URLs and reproducible scripts in Git. Raw voter-level files belong in ignored `data/raw/` storage. Publish aggregate counts and percentages rather than names, addresses, NCIDs or other voter-level identifiers.

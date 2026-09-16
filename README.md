@@ -2,38 +2,54 @@
 
 Data and reporting workspace for a Technician follow-up on voting at NC State.
 
-The project is designed to compare campus voting across election years and voting methods, including early voting and Election Day voting. The immediate baseline is the November 8, 2022 general election, when NCSU Talley Student Union was a Wake County early-voting site.
+The main comparison is intentionally simple: **2022 general election vs. 2026 general election**. Early voting and Election Day are kept separate because the voting rules and source data are different.
 
 ## Main research questions
 
-- How many people used the NC State campus voting site?
-- Who used it by age, party registration, race, ethnicity and gender?
-- How did campus-site voters differ from Wake County early voters overall?
-- In 2026, how does use of the NC State-area early-voting site compare with Talley in 2022?
-- Did voting method or location patterns change, including Election Day voting?
+- How many people used the NC State early-voting site in 2022 and 2026?
+- Who used it by age, party registration, race, ethnicity and gender / sex field?
+- How did the campus-area site compare with Wake County early voting overall?
+- After the early-voting location changed, did site use, voter composition or voting method change?
+- What happened in nearby Election Day precincts, without assuming precinct residents are NC State students?
 
 ## Project structure
 
 - `references.html` — reporting source sheet with direct links and notes
-- `methodology.md` — analysis plan and comparison rules
-- `scripts/download_2022.py` — downloads the official 2022 NCSBE absentee/early-voting file and creates aggregate outputs
-- `data/processed/` — aggregate, publication-safe outputs
-- `data/raw/` — intentionally ignored by Git because the official voter-level file can contain personal information
+- `methodology.md` — short methodology index
+- `docs/early-voting-methodology.md` — early-voting source, filters and outputs
+- `docs/election-day-methodology.md` — Election Day source, filters and outputs
+- `docs/story-plan.md` — exact 2022-to-2026 reporting plan
+- `scripts/build_2022_early_voting.py` — builds the Talley / Wake early-voting baseline
+- `scripts/build_2022_election_day.py` — builds Wake Election Day precinct and polling-place baseline
+- `data/processed/early_voting/` — publication-safe early-voting aggregates
+- `data/processed/election_day/` — publication-safe Election Day aggregates
+- `data/raw/` — ignored by Git; downloaded source files live here locally or temporarily in Actions
 
-## 2022 source
+## 2022 early-voting source
 
 North Carolina State Board of Elections, November 8, 2022 Absentee by County file:
 
 https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/absentee_county_20221108.zip
 
-NCSBE instructs users to identify early voters by filtering `abs_req_type` to `EARLY VOTING` and `ballot_rtn_status` to `ACCEPTED`.
+The early-voting pipeline validates the Talley total against Wake County's published **10,390 ballots**.
+
+## 2022 Election Day sources
+
+NCSBE historical voter-history statistics:
+
+https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/history_stats_20221108.zip
+
+NCSBE polling places:
+
+https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/polling_place_20221108.csv
 
 ## Reproducibility
 
-Run:
+Run the two baselines separately:
 
 ```bash
-python scripts/download_2022.py
+python scripts/build_2022_early_voting.py
+python scripts/build_2022_election_day.py
 ```
 
-The script downloads the official NCSBE archive into `data/raw/`, identifies Wake County records, filters accepted early votes and creates aggregate CSV files. Raw voter-level data are not committed to this public repository.
+GitHub Actions also rebuilds each side separately when its script or workflow changes. Raw voter-level data are not committed to this public repository.

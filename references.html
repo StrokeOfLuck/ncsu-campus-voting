@@ -6,69 +6,87 @@
   <title>NC State Campus Voting — References</title>
   <style>
     body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:920px;margin:40px auto;padding:0 20px;line-height:1.55;color:#171717}
-    h1{margin-bottom:.25rem} .sub{color:#555;margin-top:0}
-    .card{border:1px solid #ddd;border-radius:12px;padding:18px 20px;margin:18px 0}
-    .tag{display:inline-block;background:#eee;border-radius:999px;padding:3px 9px;font-size:.8rem;margin-bottom:8px}
-    a{color:#0645ad} code{background:#f4f4f4;padding:2px 5px;border-radius:4px}
-    .highlight{font-weight:700}
+    h1{margin-bottom:.25rem}.sub{color:#555;margin-top:0}.section{margin-top:38px;padding-top:8px;border-top:3px solid #222}
+    .card{border:1px solid #ddd;border-radius:12px;padding:18px 20px;margin:18px 0}.tag{display:inline-block;background:#eee;border-radius:999px;padding:3px 9px;font-size:.8rem;margin-bottom:8px}
+    a{color:#0645ad}code{background:#f4f4f4;padding:2px 5px;border-radius:4px}.highlight{font-weight:700}.note{background:#f7f7f7;border-left:4px solid #777;padding:12px 14px}
   </style>
 </head>
 <body>
   <h1>NC State Campus Voting</h1>
-  <p class="sub">Reporting references and data notes for the 2022 baseline and 2026 follow-up.</p>
+  <p class="sub">Reporting references for the 2022 baseline and 2026 follow-up. Main comparison: 2022 general election vs. 2026 general election.</p>
+
+  <h2 class="section">Early voting</h2>
 
   <div class="card">
     <span class="tag">PRIMARY DATA</span>
-    <h2>NCSBE — 2022 Nov. 8 Absentee / Early Voting by County</h2>
-    <p class="highlight">Main voter-level source for the 2022 early-voting baseline.</p>
-    <p>NCSBE's guidance says to identify early voters by filtering <code>abs_req_type</code> to <code>EARLY VOTING</code> and <code>ballot_rtn_status</code> to <code>ACCEPTED</code>. The file also contains fields used for demographic and site analysis.</p>
+    <h3>NCSBE — 2022 Nov. 8 Absentee / Early Voting by County</h3>
+    <p class="highlight">Main voter-level source for the 2022 Talley early-voting baseline.</p>
+    <p>The pipeline keeps accepted Wake County one-stop / early-voting records and aggregates site, date, precinct and demographic fields. Raw voter-level records stay out of the public repo.</p>
     <p><a href="https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/absentee_county_20221108.zip">Direct 2022 by-county ZIP</a><br>
-    <a href="https://www.ncsbe.gov/results-data/absentee-and-provisional-data">NCSBE Absentee and Provisional Data page</a><br>
-    <a href="https://www.ncsbe.gov/about-elections/county-boards-elections/county-resources/county-board-kit/how-work-our-data">NCSBE: How to Work with Our Data</a></p>
+    <a href="https://www.ncsbe.gov/results-data/absentee-and-provisional-data">NCSBE Absentee and Provisional Data page</a></p>
   </div>
 
   <div class="card">
-    <span class="tag">2022 TALLEY BASELINE</span>
-    <h2>Wake County — Early Voting Sites by Election & Ballots Cast</h2>
-    <p class="highlight">Wake County reports 10,390 ballots cast at NCSU Talley Student Union during 2022 general-election early voting.</p>
-    <p>Use this as a validation total for the site-level filtering of the NCSBE file.</p>
+    <span class="tag">VALIDATION</span>
+    <h3>Wake County — Early Voting Sites by Election & Ballots Cast</h3>
+    <p class="highlight">NCSU Talley Student Union: 10,390 ballots in the 2022 general-election early-voting period.</p>
+    <p>The script must reproduce this total before the Talley baseline is treated as valid.</p>
     <p><a href="https://msweb03.co.wake.nc.us/bordelec/downloads/14earlyvoting/info/EarlyVotingSitesWithTurnout.pdf">Wake County historical early-voting site turnout PDF</a></p>
   </div>
 
   <div class="card">
     <span class="tag">SITE RECORD</span>
-    <h2>NCSBE — 2022 Early Voting Sites</h2>
-    <p>The official 2022 one-stop site list identifies the Wake County NC State site as NCSU Talley Student Center, 2411 Dunn Ave., Raleigh, and lists its operating dates and hours.</p>
+    <h3>NCSBE — 2022 Early Voting Sites</h3>
+    <p>Official site list and hours for the 2022 election. Useful for documenting the Talley location and the difference between site-choice early voting and precinct-assigned Election Day voting.</p>
     <p><a href="https://dl.ncsbe.gov/One-Stop_Early_Voting/2022/One-Stop%20Voting%20Sites%20for%20the%20November%208%2C%202022%20Election.pdf">2022 one-stop voting sites PDF</a><br>
     <a href="https://www.ncsbe.gov/results-data/polling-place-data">NCSBE Polling Place Data</a></p>
   </div>
 
+  <h2 class="section">Election Day</h2>
+
   <div class="card">
-    <span class="tag">STATEWIDE CHECK</span>
-    <h2>NCSBE — 2022 General Election Turnout</h2>
-    <p>Statewide turnout tables broken out by voting method and demographics. Useful for sanity checks and context, not as a substitute for the Wake/Talley analysis.</p>
+    <span class="tag">PRIMARY DATA</span>
+    <h3>NCSBE — 2022 Historical Voter History Statistics</h3>
+    <p class="highlight">Aggregate source for Election Day participation by county, precinct, voting method and demographics.</p>
+    <p>NCSBE documents fields including <code>county_desc</code>, <code>precinct_abbrv</code>, age range, party, race, ethnicity, sex, <code>total_voters</code> and <code>voting_method</code>. The historical stats file does not contain individual voter rows.</p>
+    <p><a href="https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/history_stats_20221108.zip">Direct 2022 voter-history stats ZIP</a><br>
+    <a href="https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/layout_history_stats.txt">Voter-history stats layout</a><br>
+    <a href="https://www.ncsbe.gov/results-data/voter-history-data">NCSBE Voter History Data page</a></p>
+  </div>
+
+  <div class="card">
+    <span class="tag">POLLING PLACES</span>
+    <h3>NCSBE — 2022 Election Day Polling Places</h3>
+    <p>Official precinct polling-place records. The Election Day script keeps the Wake County rows for reference.</p>
+    <p><a href="https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/polling_place_20221108.csv">Direct 2022 polling-place file</a><br>
+    <a href="https://www.ncsbe.gov/results-data/polling-place-data">NCSBE Polling Place Data page</a></p>
+  </div>
+
+  <div class="card">
+    <span class="tag">VALIDATION</span>
+    <h3>NCSBE — 2022 General Election Turnout</h3>
+    <p class="highlight">NCSBE reports 1,578,545 in-person Election Day voters statewide in the 2022 general election.</p>
+    <p>The Election Day pipeline checks its statewide history-stat total against this published figure.</p>
     <p><a href="https://www.ncsbe.gov/results-data/voter-turnout/2022-general-election-turnout">2022 General Election Turnout</a></p>
   </div>
 
-  <div class="card">
-    <span class="tag">ELECTION DAY</span>
-    <h2>NCSBE — Polling Place and Voter History Data</h2>
-    <p>Use polling-place files to identify Election Day locations and voter-history files to analyze voting method and precinct-level participation. Election Day voting is precinct-assigned, unlike countywide early-voting site choice.</p>
-    <p><a href="https://www.ncsbe.gov/results-data/polling-place-data">Polling Place Data</a><br>
-    <a href="https://www.ncsbe.gov/results-data/voter-history-data">Voter History Data</a></p>
-  </div>
+  <h2 class="section">Reporting references</h2>
 
   <div class="card">
     <span class="tag">PRIOR TECHNICIAN WORK</span>
-    <h2>Technician — “Here's who voted early in Talley Student Union”</h2>
-    <p>Prior campus voting analysis to use as a methodological reference when deciding which demographic comparisons and graphics to reproduce for the follow-up.</p>
+    <h3>Technician — “Here's who voted early in Talley Student Union”</h3>
+    <p>Methodological reference for demographic comparisons and interactive graphics.</p>
     <p><a href="https://technicianonline.com/157482/news/heres-who-voted-early-in-talley-student-union/">Read the Technician story</a></p>
   </div>
 
   <div class="card">
-    <span class="tag">REPORTING NOTE</span>
-    <h2>Privacy / publication</h2>
-    <p>The official election files can contain voter-level personal information. Keep the raw archive local and publish aggregate counts and percentages in this repository rather than names, addresses, NCIDs or other voter-level identifiers.</p>
+    <span class="tag">PROJECT DOCS</span>
+    <h3>Internal documentation</h3>
+    <p><a href="docs/early-voting-methodology.md">Early-voting methodology</a><br>
+    <a href="docs/election-day-methodology.md">Election Day methodology</a><br>
+    <a href="docs/story-plan.md">2022-to-2026 story plan</a></p>
   </div>
+
+  <p class="note"><strong>Reporting rule:</strong> Early-voting site users are not automatically NC State students, and residents of campus-area Election Day precincts are not automatically NC State students. Describe the populations the data actually measure.</p>
 </body>
 </html>

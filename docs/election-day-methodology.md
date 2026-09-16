@@ -12,20 +12,26 @@ NCSBE 2022 Election Day polling-place file:
 
 The historical voter-history statistics are aggregate counts, not individual voter records. NCSBE documents fields including county, precinct, age range, party, race, ethnicity, sex, total voters and voting method.
 
-## Election Day filter
+## Election Day filter and validation
 
-Filter voter-history statistics to Election Day voting method, then aggregate:
+The 2022 historical statistics file stores `voting_method` as legacy one-character codes. The current NCSBE layout describes the field but does not provide a legend for those legacy values, so this project does **not** guess what each individual letter means.
 
-- statewide total for validation
-- Wake County total
+Instead, the script totals each code statewide and finds the unique combination of codes whose count exactly reproduces NCSBE's published **1,578,545 in-person Election Day voters statewide**. For the archived 2022 file, that validated combination is `A`, `C`, `T`, and `V` together. The individual letters are left unlabeled.
+
+Using that validated grouping, the baseline contains **196,547 Wake County Election Day voters**.
+
+The script then aggregates:
+
+- statewide Election Day total for validation
+- Wake County Election Day total
 - Wake County totals by precinct
 - Wake County demographic distributions
 
-NCSBE's published 2022 turnout page reports **1,578,545 in-person Election Day voters statewide**. The script checks its statewide aggregation against that number.
+If the statewide total ever fails to match the official NCSBE figure, the script stops rather than silently producing a baseline.
 
 ## Polling places
 
-The polling-place file identifies official Election Day locations by county and precinct. The script saves the Wake County rows under the Election Day output folder.
+The polling-place file identifies official Election Day locations by county and precinct. The script saves the Wake County rows under the Election Day output folder. The 2022 file contains 208 Wake County polling-place rows.
 
 Election Day polling places are assigned by a voter's residential address. This is different from early voting, where a voter may use any early-voting site in the county.
 
@@ -37,6 +43,8 @@ Stored under `data/processed/election_day/`:
 - `2022_wake_election_day_by_precinct.csv`
 - `2022_wake_election_day_demographics.csv`
 - `2022_wake_polling_places.csv`
+
+The summary JSON records the source URLs, official validation figure, selected legacy-code grouping, statewide method-code totals and validation difference so the filtering decision is auditable later.
 
 ## Campus-area precinct rule
 

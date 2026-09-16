@@ -8,7 +8,6 @@ outputs are written to data/processed/.
 from __future__ import annotations
 
 import csv
-import io
 import json
 import shutil
 import urllib.request
@@ -30,6 +29,15 @@ def norm(s: str | None) -> str:
 
 def upper(s: str | None) -> str:
     return norm(s).upper()
+
+
+def is_early_request(value: str | None) -> bool:
+    v = upper(value)
+    return v in {"EARLY VOTING", "ONE-STOP", "ONE STOP", "ONESTOP"} or "EARLY" in v
+
+
+def is_accepted(value: str | None) -> bool:
+    return upper(value).startswith("ACCEPTED")
 
 
 def detect_dialect(path: Path):
@@ -144,6 +152,8 @@ def main():
     if missing:
         raise RuntimeError(f"Missing expected columns: {', '.join(missing)}. Found: {fields}")
 
+    request_values = Counter()
+    status_values = Counter()
     site_counts = Counter()
     daily_counts = Counter()
     dimension_counts = defaultdict(Counter)
@@ -155,9 +165,11 @@ def main():
         for row in reader:
             if county_col and upper(row.get(county_col)) != "WAKE":
                 continue
-            if upper(row.get(req_col)) != "EARLY VOTING":
+            request_values[upper(row.get(req_col)) or "(blank)"] += 1
+            status_values[upper(row.get(status_col)) or "(blank)"] += 1
+            if not is_early_request(row.get(req_col)):
                 continue
-            if upper(row.get(status_col)) != "ACCEPTED":
+            if not is_accepted(row.get(status_col)):
                 continue
 
             wake_early_total += 1
@@ -183,6 +195,9 @@ def main():
                 dimension_counts["age"][clean_age(row.get(age_col))] += 1
             if sdr_col and upper(row.get(sdr_col)) in {"Y", "YES"}:
                 talley_sdr += 1
+
+    print("Request-type values:", request_values.most_common())
+    print("Return-status values:", status_values.most_common())
 
     site_rows = [{"site_name": site, "accepted_early_votes": count} for site, count in site_counts.most_common()]
     write_csv(PROCESSED / "2022_wake_early_voting_by_site.csv", ["site_name", "accepted_early_votes"], site_rows)

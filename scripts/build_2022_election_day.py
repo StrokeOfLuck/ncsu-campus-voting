@@ -56,8 +56,17 @@ def extract_history():
         zf.extractall(HISTORY_DIR)
 
 
+def text_encoding(path: Path) -> str:
+    with path.open("rb") as f:
+        start = f.read(4)
+    if start.startswith(b"\xff\xfe") or start.startswith(b"\xfe\xff"):
+        return "utf-16"
+    return "utf-8-sig"
+
+
 def detect_dialect(path: Path):
-    with path.open("r", encoding="utf-8-sig", errors="replace", newline="") as f:
+    encoding = text_encoding(path)
+    with path.open("r", encoding=encoding, errors="replace", newline="") as f:
         sample = f.read(32768)
     try:
         return csv.Sniffer().sniff(sample, delimiters=",\t|")
@@ -67,7 +76,8 @@ def detect_dialect(path: Path):
 
 def row_reader(path: Path):
     dialect = detect_dialect(path)
-    f = path.open("r", encoding="utf-8-sig", errors="replace", newline="")
+    encoding = text_encoding(path)
+    f = path.open("r", encoding=encoding, errors="replace", newline="")
     return f, csv.DictReader(f, dialect=dialect)
 
 

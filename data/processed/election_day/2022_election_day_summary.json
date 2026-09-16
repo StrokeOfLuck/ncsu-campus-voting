@@ -1,0 +1,20 @@
+{
+  "statewide_election_day_voters_from_history_stats": 0,
+  "ncsbe_published_statewide_election_day_voters": 1578545,
+  "statewide_validation_difference": -1578545,
+  "wake_election_day_voters": 0,
+  "voting_method_values_seen": {
+    "P": 9171,
+    "V": 269505,
+    "M": 89083,
+    "O": 271030,
+    "C": 15743,
+    "U": 33896,
+    "T": 9370,
+    "A": 1
+  },
+  "history_source_url": "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/history_stats_20221108.zip",
+  "polling_place_source_url": "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/polling_place_20221108.csv",
+  "wake_polling_place_rows": 208,
+  "raw_data_committed": false
+}

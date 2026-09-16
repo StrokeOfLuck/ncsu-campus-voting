@@ -10,6 +10,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: build-2022-baselines
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,5 +38,6 @@ jobs:
             echo "No early-voting changes to commit."
           else
             git commit -m "Build 2022 early-voting baseline"
+            git pull --rebase origin main
             git push
           fi

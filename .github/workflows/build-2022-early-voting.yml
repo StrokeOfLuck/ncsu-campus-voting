@@ -1,0 +1,38 @@
+name: Build 2022 early-voting baseline
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/build_2022_early_voting.py'
+      - '.github/workflows/build-2022-early-voting.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build early-voting aggregates
+        run: python scripts/build_2022_early_voting.py
+
+      - name: Commit early-voting outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/processed/early_voting/
+          if git diff --cached --quiet; then
+            echo "No early-voting changes to commit."
+          else
+            git commit -m "Build 2022 early-voting baseline"
+            git push
+          fi

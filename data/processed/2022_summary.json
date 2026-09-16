@@ -1,10 +1,10 @@
 {
   "election": "2022-11-08 General Election",
   "source_url": "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/absentee_county_20221108.zip",
-  "wake_accepted_early_votes_from_file": 0,
-  "talley_accepted_early_votes_from_file": 0,
-  "talley_same_day_registration_records": 0,
+  "wake_accepted_early_votes_from_file": 219169,
+  "talley_accepted_early_votes_from_file": 10390,
+  "talley_same_day_registration_records": 763,
   "wake_county_published_talley_total": 10390,
-  "validation_difference": -10390,
+  "validation_difference": 0,
   "raw_data_committed": false
 }

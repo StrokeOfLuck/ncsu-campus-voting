@@ -113,12 +113,39 @@ def locate_history_file() -> Path:
     raise RuntimeError("Could not identify the NCSBE history statistics file.")
 
 
-def is_election_day_method(value: str) -> bool:
-    method = upper(value)
-    return method in {"ELECTION DAY", "ELECTION", "IN PERSON ELECTION DAY"} or "ELECTION DAY" in method
+def detect_election_day_method(history_file: Path):
+    """Identify the historical-file method code by matching NCSBE's published total.
+
+    The old history-stats file uses one-character method codes rather than the
+    current descriptive labels. Instead of guessing a code, match each method's
+    statewide voter total to NCSBE's published 2022 Election Day total.
+    """
+    f, reader = row_reader(history_file)
+    fields = reader.fieldnames or []
+    method_col = find_col(fields, "voting_method")
+    total_col = find_col(fields, "total_voters")
+    if not method_col or not total_col:
+        raise RuntimeError(f"Missing voting_method/total_voters fields. Found: {fields}")
+
+    method_totals = Counter()
+    with f:
+        for row in reader:
+            try:
+                count = int(float(norm(row.get(total_col)) or 0))
+            except ValueError:
+                continue
+            method_totals[norm(row.get(method_col)) or "Unknown"] += count
+
+    matches = [method for method, total in method_totals.items() if total == NCSBE_STATEWIDE_ELECTION_DAY_TOTAL]
+    if len(matches) != 1:
+        raise RuntimeError(
+            "Could not uniquely identify the Election Day method code by NCSBE's published total. "
+            f"Method totals: {dict(method_totals)}"
+        )
+    return matches[0], dict(method_totals)
 
 
-def build_history_outputs(history_file: Path):
+def build_history_outputs(history_file: Path, election_day_method: str):
     f, reader = row_reader(history_file)
     fields = reader.fieldnames or []
 
@@ -140,13 +167,10 @@ def build_history_outputs(history_file: Path):
     wake_total = 0
     precinct_counts = Counter()
     dimension_counts = defaultdict(Counter)
-    methods_seen = Counter()
 
     with f:
         for row in reader:
-            method = norm(row.get(method_col))
-            methods_seen[method or "Unknown"] += 1
-            if not is_election_day_method(method):
+            if norm(row.get(method_col)) != election_day_method:
                 continue
             try:
                 count = int(float(norm(row.get(total_col)) or 0))
@@ -192,13 +216,7 @@ def build_history_outputs(history_file: Path):
         demo_rows,
     )
 
-    return {
-        "statewide_election_day_voters_from_history_stats": statewide_total,
-        "ncsbe_published_statewide_election_day_voters": NCSBE_STATEWIDE_ELECTION_DAY_TOTAL,
-        "statewide_validation_difference": statewide_total - NCSBE_STATEWIDE_ELECTION_DAY_TOTAL,
-        "wake_election_day_voters": wake_total,
-        "voting_method_values_seen": dict(methods_seen),
-    }
+    return statewide_total, wake_total
 
 
 def build_polling_place_output():
@@ -227,18 +245,29 @@ def main():
 
     history_file = locate_history_file()
     print(f"History source: {history_file}")
-    summary = build_history_outputs(history_file)
-    summary["history_source_url"] = HISTORY_URL
-    summary["polling_place_source_url"] = POLLING_URL
-    summary["wake_polling_place_rows"] = build_polling_place_output()
-    summary["raw_data_committed"] = False
+    election_day_method, method_totals = detect_election_day_method(history_file)
+    print(f"Election Day voting_method code identified by official total: {election_day_method}")
+
+    statewide_total, wake_total = build_history_outputs(history_file, election_day_method)
+    summary = {
+        "statewide_election_day_voters_from_history_stats": statewide_total,
+        "ncsbe_published_statewide_election_day_voters": NCSBE_STATEWIDE_ELECTION_DAY_TOTAL,
+        "statewide_validation_difference": statewide_total - NCSBE_STATEWIDE_ELECTION_DAY_TOTAL,
+        "wake_election_day_voters": wake_total,
+        "selected_election_day_method_code": election_day_method,
+        "statewide_voters_by_history_method_code": method_totals,
+        "history_source_url": HISTORY_URL,
+        "polling_place_source_url": POLLING_URL,
+        "wake_polling_place_rows": build_polling_place_output(),
+        "raw_data_committed": False,
+    }
 
     PROCESSED.mkdir(parents=True, exist_ok=True)
     (PROCESSED / "2022_election_day_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(json.dumps(summary, indent=2))
 
     if summary["statewide_validation_difference"] != 0:
-        print("WARNING: Statewide Election Day total does not match NCSBE's published 1,578,545. Review voting-method labels or history-file structure.")
+        raise RuntimeError("Election Day validation failed against NCSBE's published statewide total.")
 
 
 if __name__ == "__main__":

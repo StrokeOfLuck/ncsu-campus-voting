@@ -1,16 +1,23 @@
 {
-  "statewide_election_day_voters_from_history_stats": 0,
+  "statewide_election_day_voters_from_history_stats": 1578545,
   "ncsbe_published_statewide_election_day_voters": 1578545,
-  "statewide_validation_difference": -1578545,
-  "wake_election_day_voters": 0,
-  "voting_method_values_seen": {
-    "P": 9171,
-    "V": 269505,
-    "M": 89083,
-    "O": 271030,
-    "C": 15743,
-    "U": 33896,
-    "T": 9370,
+  "statewide_validation_difference": 0,
+  "wake_election_day_voters": 196547,
+  "selected_election_day_history_method_codes": [
+    "A",
+    "C",
+    "T",
+    "V"
+  ],
+  "method_code_note": "Legacy history_stats codes are grouped only because this unique subset exactly reproduces NCSBE's published 2022 in-person Election Day statewide total; no unsupported individual-code labels are assigned.",
+  "statewide_voters_by_history_method_code": {
+    "P": 10259,
+    "V": 1542977,
+    "M": 187746,
+    "O": 1928491,
+    "C": 24392,
+    "U": 81864,
+    "T": 11175,
     "A": 1
   },
   "history_source_url": "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2022_11_08/history_stats_20221108.zip",

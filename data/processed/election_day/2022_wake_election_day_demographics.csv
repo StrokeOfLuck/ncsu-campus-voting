@@ -1,1 +1,24 @@
 dimension,value,count,percent
+age,Age 41 - 65,100770,51.27
+age,Age 26 - 40,50318,25.601
+age,Age Over 66,29977,15.252
+age,Age 18 - 25,15482,7.877
+party,UNA,76581,38.963
+party,DEM,61061,31.067
+party,REP,57444,29.227
+party,LIB,1451,0.738
+party,GRE,10,0.005
+race,W,143166,72.841
+race,B,24553,12.492
+race,U,14480,7.367
+race,O,6646,3.381
+race,A,6123,3.115
+race,M,1117,0.568
+race,I,446,0.227
+race,P,16,0.008
+ethnicity,NL,141930,72.212
+ethnicity,UN,49179,25.021
+ethnicity,HL,5438,2.767
+sex,F,97181,49.444
+sex,M,86744,44.134
+sex,U,12622,6.422
